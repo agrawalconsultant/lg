@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Students Exam</title>
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: auto;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #timer {
+            /* height: 100vh; */
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            pointer-events: none;
+            top: 40%;
+            left: 20%;
+            right: 20%;
+            bottom: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="timer">
+        <h1>Web-app is temporarily down for Maintenance</h1>
+        <p>We'll be back online in</p>
+        <p id="countdown"></p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+    <script>
+
+
+        // Set the target date and time for the countdown
+        var targetDate = new Date("2023-08-25T17:36:00").getTime();
+
+        // Update the countdown every 1 second
+        var countdownInterval = setInterval(function () {
+            var now = new Date().getTime();
+            var timeRemaining = targetDate - now;
+
+            if (timeRemaining <= 0) {
+                clearInterval(countdownInterval);
+                // Redirect to the linked page when the timer finishes
+                window.location.href = "exam02.html";
+            }
+
+            var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+        }, 1000);
+
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const balls = [];
+
+
+
+
+
+
+
+
+        class Ball {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.dy = 0;
+                this.gravity = 0.2;
+                this.friction = 0.99;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                this.dy += this.gravity;
+                this.dy *= this.friction;
+                this.y += this.dy;
+
+                // Prevent the balls from going out of the canvas
+                if (this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    this.dy *= -1; // Bounce effect
+                }
+            }
+        }
+
+
+
+
+
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            balls.forEach(ball => {
+                ball.update();
+                ball.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        function createBall() {
+            const x = Math.random() * canvas.width;
+            const radius = Math.random() * 20 + 10;
+            const color = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
+            balls.push(new Ball(x, 0, radius, color));
+        }
+
+        canvas.addEventListener('click', createBall);
+
+        animate();
+    </script>
+</body>
+
+</html>
